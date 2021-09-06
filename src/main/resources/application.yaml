@@ -1,0 +1,13 @@
+server:
+  port: 8084
+  servlet:
+    context-path: /api
+spring:
+  datasource:
+    username: sa
+    password:
+    driver-class-name: org.hsqldb.jdbc.JDBCDriver
+    url:  jdbc:hsqldb:mem:testdb;DB_CLOSE_DELAY=-1
+log:
+  config:
+    corePoolSize: 5
