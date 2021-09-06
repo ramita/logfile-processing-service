@@ -1,0 +1,26 @@
+
+plugins {
+    id 'org.springframework.boot' version '2.0.0.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+}
+
+repositories {
+    mavenCentral()
+}
+group 'com'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa'
+    runtime group: 'org.hsqldb', name: 'hsqldb', version: '2.4.0'
+    compile group:'org.springframework.boot', name:'spring-boot-starter-web'
+
+}
