@@ -36,7 +36,7 @@ Server starts on port `8034`
 ```
 
 ## Testing if the application works try:
-http://localhost:8034/api/log/process
+http://localhost:8084/api/log/process
 
 You will see the response: 
 ```
