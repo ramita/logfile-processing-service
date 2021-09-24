@@ -16,7 +16,7 @@ public class LogExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(LoggerException.class)
     public ResponseEntity<Object> handleExceptions(LoggerException ex) {
 
-        return new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
 
     }
 }

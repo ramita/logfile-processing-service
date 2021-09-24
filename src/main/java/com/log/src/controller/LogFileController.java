@@ -9,11 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.websocket.server.PathParam;
 import java.util.List;
 
 @RestController
@@ -25,9 +23,10 @@ public class LogFileController {
     ILoggerService loggerService;
 
     @GetMapping("/log/process")
-    public ResponseEntity<List<LoggerData>> getDetails(@RequestParam String logFilePath) {
-        LOGGER.info("Logger Processing request received");
-        List<LoggerData> loggerData = loggerService.getDetails(logFilePath);
+    public ResponseEntity<List<LoggerData>> getDetails(@RequestParam("file") MultipartFile multipartFile) {
+        LOGGER.info("Logger Processing request received.");
+        List<LoggerData> loggerData = loggerService.getDetails(multipartFile);
+        LOGGER.info("Logger Processing completed.");
         return new ResponseEntity<>(loggerData, HttpStatus.OK);
     }
 }

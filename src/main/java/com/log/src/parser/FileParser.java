@@ -4,11 +4,10 @@ import com.log.src.exception.LoggerException;
 import com.log.src.model.ValueHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.ResourceUtils;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Scanner;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
@@ -19,11 +18,14 @@ public class FileParser implements Runnable {
     private final BlockingQueue<String> blockingQueue;
     private CountDownLatch countDownLatch;
     private ValueHolder valueHolder;
+    private MultipartFile file;
 
-    public FileParser(BlockingQueue<String> blockingQueue, CountDownLatch countDownLatch, ValueHolder valueHolder) {
+    public FileParser(BlockingQueue<String> blockingQueue, CountDownLatch countDownLatch, ValueHolder valueHolder,
+                      MultipartFile file) {
         this.blockingQueue = blockingQueue;
         this.countDownLatch = countDownLatch;
         this.valueHolder = valueHolder;
+        this.file = file;
     }
 
     /**
@@ -31,12 +33,10 @@ public class FileParser implements Runnable {
      */
     @Override
     public void run() {
-
-        FileInputStream inputStream = null;
+        InputStream inputStream = null;
         Scanner sc = null;
         try {
-            File file = ResourceUtils.getFile("classpath:logfile.txt");
-            inputStream = new FileInputStream(file);
+            inputStream = file.getInputStream();
             sc = new Scanner(inputStream, "UTF-8");
             while (sc.hasNextLine()) {
                 String line = sc.nextLine();

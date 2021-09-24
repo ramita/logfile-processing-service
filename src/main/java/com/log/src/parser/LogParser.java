@@ -1,6 +1,7 @@
 package com.log.src.parser;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.log.src.constant.Error;
 import com.log.src.exception.LoggerException;
 import com.log.src.model.Event;
 import com.log.src.model.ValueHolder;
@@ -12,10 +13,11 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 
-public class LogParser implements Runnable {
+public class LogParser implements Callable<Integer> {
     private static final Logger LOGGER = LoggerFactory.getLogger(LogParser.class);
 
     private final BlockingQueue<String> blockingQueue;
@@ -27,11 +29,12 @@ public class LogParser implements Runnable {
 
     public LogParser(BlockingQueue<String> blockingQueue,
                      CountDownLatch countDownLatch,
+                     ConcurrentHashMap<String, Long> eventData,
                      EventRepository eventRepository,
                      ValueHolder valueHolder) {
         this.blockingQueue = blockingQueue;
         this.countDownLatch = countDownLatch;
-        eventData = new ConcurrentHashMap<>();
+        this.eventData = eventData;
         this.eventRepository = eventRepository;
         this.valueHolder = valueHolder;
     }
@@ -40,7 +43,7 @@ public class LogParser implements Runnable {
      * Process records for log file.
      */
     @Override
-    public void run() {
+    public Integer call() throws Exception  {
         ObjectMapper objectMapper = new ObjectMapper();
         Event event ;
         while (true) {
@@ -54,11 +57,14 @@ public class LogParser implements Runnable {
                 }
             } catch (IOException | InterruptedException ex) {
                 LOGGER.error(ex.getMessage());
-                throw new LoggerException("Error while reading log file data.", ex);
+                countDownLatch.countDown();
+                throw new LoggerException(Error.LOG_FILE_INFORMAT.msg);
             }
         }
         countDownLatch.countDown();
         LOGGER.info("Log File Reading finished");
+
+        return 0;
     }
 
     private void process(Event event) {
@@ -80,4 +86,5 @@ public class LogParser implements Runnable {
             }
         }
     }
+
 }
