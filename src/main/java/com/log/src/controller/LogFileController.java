@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,7 +23,7 @@ public class LogFileController {
     @Autowired
     ILoggerService loggerService;
 
-    @GetMapping("/log/process")
+    @PostMapping("/log/process")
     public ResponseEntity<List<LoggerData>> getDetails(@RequestParam("file") MultipartFile multipartFile) {
         LOGGER.info("Logger Processing request received.");
         List<LoggerData> loggerData = loggerService.getDetails(multipartFile);
