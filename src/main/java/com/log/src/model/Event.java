@@ -1,6 +1,6 @@
-package com.creditsuisse.src.model;
+package com.log.src.model;
 
-import com.creditsuisse.src.model.EventState;
+import com.log.src.model.EventState;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

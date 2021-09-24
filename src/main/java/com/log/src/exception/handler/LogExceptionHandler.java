@@ -1,6 +1,6 @@
-package com.creditsuisse.src.exception.handler;
+package com.log.src.exception.handler;
 
-import com.creditsuisse.src.exception.LoggerException;
+import com.log.src.exception.LoggerException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

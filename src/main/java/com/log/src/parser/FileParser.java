@@ -1,4 +1,4 @@
-package com.log.src.processor;
+package com.log.src.parser;
 
 import com.log.src.exception.LoggerException;
 import com.log.src.model.ValueHolder;
@@ -13,19 +13,17 @@ import java.util.Scanner;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 
-public class FileProcessor implements Runnable {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FileProcessor.class);
+public class FileParser implements Runnable {
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileParser.class);
 
     private final BlockingQueue<String> blockingQueue;
     private CountDownLatch countDownLatch;
     private ValueHolder valueHolder;
 
-    public FileProcessor(BlockingQueue<String> blockingQueue, CountDownLatch countDownLatch, ValueHolder valueHolder) {
+    public FileParser(BlockingQueue<String> blockingQueue, CountDownLatch countDownLatch, ValueHolder valueHolder) {
         this.blockingQueue = blockingQueue;
         this.countDownLatch = countDownLatch;
-
         this.valueHolder = valueHolder;
-
     }
 
     /**

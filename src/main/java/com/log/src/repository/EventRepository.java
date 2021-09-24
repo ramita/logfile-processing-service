@@ -1,6 +1,6 @@
-package com.creditsuisse.src.repository;
+package com.log.src.repository;
 
-import com.creditsuisse.src.model.Event;
+import com.log.src.model.Event;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,4 +1,4 @@
-package com.creditsuisse.src.model;
+package com.log.src.model;
 
 public enum EventState {
     STARTED,

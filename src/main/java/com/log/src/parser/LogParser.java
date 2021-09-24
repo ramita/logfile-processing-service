@@ -1,37 +1,37 @@
-package com.log.src.processor;
+package com.log.src.parser;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.log.src.exception.LoggerException;
 import com.log.src.model.Event;
 import com.log.src.model.ValueHolder;
 import com.log.src.repository.EventRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Map;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 
-public class RecordProcessor implements Runnable {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RecordProcessor.class);
+public class LogParser implements Runnable {
+    private static final Logger LOGGER = LoggerFactory.getLogger(LogParser.class);
 
     private final BlockingQueue<String> blockingQueue;
     private CountDownLatch countDownLatch;
-    private Map<String, Long> hp;
+
     private ValueHolder valueHolder;
+    private ConcurrentHashMap<String, Long> eventData ;
     private EventRepository eventRepository;
 
-    public RecordProcessor(BlockingQueue<String> blockingQueue,
-                           CountDownLatch countDownLatch,
-                           Map<String, Long> hp,
-                           EventRepository eventRepository,
-                           ValueHolder valueHolder) {
+    public LogParser(BlockingQueue<String> blockingQueue,
+                     CountDownLatch countDownLatch,
+                     EventRepository eventRepository,
+                     ValueHolder valueHolder) {
         this.blockingQueue = blockingQueue;
         this.countDownLatch = countDownLatch;
-        this.hp = hp;
+        eventData = new ConcurrentHashMap<>();
         this.eventRepository = eventRepository;
         this.valueHolder = valueHolder;
     }
@@ -54,29 +54,29 @@ public class RecordProcessor implements Runnable {
                 }
             } catch (IOException | InterruptedException ex) {
                 LOGGER.error(ex.getMessage());
-                throw new LoggerException(ex.getMessage(), ex);
+                throw new LoggerException("Error while reading log file data.", ex);
             }
         }
         countDownLatch.countDown();
-        LOGGER.info("CPU finished");
+        LOGGER.info("Log File Reading finished");
     }
 
     private void process(Event event) {
-        synchronized (RecordProcessor.class) {
+        synchronized (LogParser.class) {
             String newEventId = event.getId();
-            if (hp.containsKey(newEventId)) {
+            if (eventData.containsKey(newEventId)) {
                 Instant startInstant = Instant.ofEpochMilli(event.getTimestamp());
-                Instant endInstance = Instant.ofEpochMilli(hp.get(newEventId));
+                Instant endInstance = Instant.ofEpochMilli(eventData.get(newEventId));
                 long delta = Duration.between(startInstant, endInstance).toMillis();
-                if (delta > 4) {
+                if (delta > 4)
                     event.setAlert(true);
-                } else {
+                else {
                     event.setAlert(false);
                 }
                 eventRepository.save(event);
-                hp.remove(newEventId);
+                eventData.remove(newEventId);
             } else {
-                hp.put(event.getId(), event.getTimestamp());
+                eventData.put(event.getId(), event.getTimestamp());
             }
         }
     }

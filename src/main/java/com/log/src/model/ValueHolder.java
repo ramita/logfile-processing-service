@@ -1,4 +1,4 @@
-package com.creditsuisse.src.model;
+package com.log.src.model;
 
 public class ValueHolder {
     private boolean flag;

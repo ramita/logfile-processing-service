@@ -4,7 +4,7 @@ import com.log.src.model.LoggerData;
 import org.springframework.stereotype.Component;
 
 @Component
-public class LoggetDataMapper {
+public class LoggerDataMapper {
 
     /**
      * Map and return loggerData.

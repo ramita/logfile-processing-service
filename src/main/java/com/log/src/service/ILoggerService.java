@@ -1,9 +1,9 @@
-package com.creditsuisse.src.service;
+package com.log.src.service;
 
-import com.creditsuisse.src.model.LoggerData;
+import com.log.src.model.LoggerData;
 
 import java.util.List;
 
 public interface ILoggerService {
-    List<LoggerData> getDetails();
+    List<LoggerData> getDetails(String logFilePath);
 }
