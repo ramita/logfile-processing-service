@@ -1,4 +1,4 @@
-package com.creditsuisse.src;
+package com.log.src;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

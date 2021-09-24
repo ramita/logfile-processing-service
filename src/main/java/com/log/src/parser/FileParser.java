@@ -1,7 +1,7 @@
-package com.creditsuisse.src.processor;
+package com.log.src.processor;
 
-import com.creditsuisse.src.exception.LoggerException;
-import com.creditsuisse.src.model.ValueHolder;
+import com.log.src.exception.LoggerException;
+import com.log.src.model.ValueHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ResourceUtils;

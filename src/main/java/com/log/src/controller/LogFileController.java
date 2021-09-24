@@ -1,7 +1,7 @@
-package com.creditsuisse.src.controller;
+package com.log.src.controller;
 
-import com.creditsuisse.src.model.LoggerData;
-import com.creditsuisse.src.service.ILoggerService;
+import com.log.src.model.LoggerData;
+import com.log.src.service.ILoggerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

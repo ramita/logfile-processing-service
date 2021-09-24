@@ -1,9 +1,9 @@
-package com.creditsuisse.src.processor;
+package com.log.src.processor;
 
-import com.creditsuisse.src.exception.LoggerException;
-import com.creditsuisse.src.model.Event;
-import com.creditsuisse.src.model.ValueHolder;
-import com.creditsuisse.src.repository.EventRepository;
+import com.log.src.exception.LoggerException;
+import com.log.src.model.Event;
+import com.log.src.model.ValueHolder;
+import com.log.src.repository.EventRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

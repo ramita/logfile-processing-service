@@ -1,6 +1,6 @@
-package com.creditsuisse.src.mapper;
+package com.log.src.mapper;
 
-import com.creditsuisse.src.model.LoggerData;
+import com.log.src.model.LoggerData;
 import org.springframework.stereotype.Component;
 
 @Component
