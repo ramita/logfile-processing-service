@@ -33,6 +33,7 @@ public class FileParser implements Runnable {
      */
     @Override
     public void run() {
+        LOGGER.info(" File Parser Thread started "+Thread.currentThread().getName());
         InputStream inputStream = null;
         Scanner sc = null;
         try {
@@ -59,8 +60,9 @@ public class FileParser implements Runnable {
                 sc.close();
             }
         }
+
+        valueHolder.setFileReadingCompleted(true);
         countDownLatch.countDown();
-        valueHolder.setFlag(true);
         LOGGER.info("Log File Processing completed.");
     }
 }

@@ -22,8 +22,15 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Future;
+import java.util.concurrent.ExecutionException;
 
 @Service
 public class LoggerService implements ILoggerService {
@@ -46,7 +53,9 @@ public class LoggerService implements ILoggerService {
 
     private ExecutorService executorService;
 
-    private ConcurrentHashMap eventData;
+    private ConcurrentHashMap<String, Long> eventData;
+
+    private CountDownLatch countDownLatch;
 
     /**
      * Process and logger file information.
@@ -61,53 +70,61 @@ public class LoggerService implements ILoggerService {
     public List<LoggerData> getDetails(MultipartFile multipartFile) {
         isFilePathValid(multipartFile.getOriginalFilename());
 
-        CountDownLatch countDownLatch = new CountDownLatch(threadCount);
+        countDownLatch = new CountDownLatch(threadCount);
+
         ValueHolder valueHolder = new ValueHolder();
         BlockingQueue<String> logQueue = new ArrayBlockingQueue<>(queueSize);
         this.eventData = new ConcurrentHashMap();
 
-        List<Future<Integer>> futures = new ArrayList<>();
+        List<Future<Boolean>> futures = new ArrayList<>();
         StopWatch watch = new StopWatch();
         watch.start();
 
         // Start Log Parser
         for (int i = 0; i < threadCount - 1; i++) {
-           Future<Integer> recodObject =  executorService.submit(new LogParser(logQueue, countDownLatch, eventData, eventRepository, valueHolder));
-            futures.add(recodObject);
+            Future<Boolean> record = executorService.submit(new LogParser(logQueue, countDownLatch, eventData,
+                    eventRepository, valueHolder));
+            futures.add(record);
         }
 
         // Start File Parser
         executorService.execute(new FileParser(logQueue, countDownLatch, valueHolder, multipartFile));
 
-
         try {
+
             countDownLatch.await();
+
         } catch (InterruptedException ex) {
             LOGGER.error(ex.getMessage());
             throw new LoggerException("Error while Processing the log file.", ex);
         }
         watch.stop();
-        for(Future<Integer> future : futures){
-            if(future.isDone()){
+        for (Future<Boolean> future : futures) {
+            if (future.isDone()) {
                 try {
-                   future.get();
+                    if (future.get()) {
+                        throw new LoggerException("Error while parsing the file, please check the file.");
+                    }
                 } catch (InterruptedException e) {
                     throw new LoggerException(e.getMessage());
                 } catch (ExecutionException e) {
-                   throw new LoggerException(e.getMessage());
+                    throw new LoggerException(e.getMessage());
                 }
             }
         }
 
-        List<Event> events = eventRepository.findAll();
-        List<LoggerData> loggerDataList = events.stream().map(e -> loggetDataMapper.mapToLoggerData(e.getId(),
-                e.isAlert())).collect(Collectors.toList());
+        List<LoggerData> loggerDataList = getLoggerData();
 
         LOGGER.info("Total log records saved to db " + eventRepository.count());
 
         LOGGER.info("Total time taken for a file processing in ms " + watch.getTotalTimeMillis());
 
         return loggerDataList;
+    }
+
+    private List<LoggerData> getLoggerData() {
+        List<Event> events = eventRepository.findAll();
+        return events.stream().map(e -> loggetDataMapper.mapToLoggerData(e.getId(), e.isAlert())).collect(Collectors.toList());
     }
 
     private boolean isFilePathValid(String logFilePath) {

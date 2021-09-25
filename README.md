@@ -35,13 +35,14 @@ Take the path to logfile.txt as an input argument
 Server starts on port `8034`
 ```
 
-## Testing if the application works try:
-1. Start the application as gradlew bootrun
+## Testing the application :
+1. Start the application as >  gradlew bootrun
 2. Hit the endpoint > http://localhost:8084/api/index.html
-3. select the log file placed which user want to process or select the log file preset in resources folder
+3. Select the log file placed which user want to process or select the log file preset in resources folder
 4. Click submit to see the processing result.
+5. Output will show log data with id and alert , alert is true if time taken by log is more then 4ms
 
-You will see the response: 
+### You will see the response: 
 ```
 [{"id":"stcmba","alert":false},{"id":"stcmbb","alert":false},{"id":"stcmbc","alert":false},{"id":"stcmbd","alert":true},{"id":"stcmbe","alert":false},{"id":"stcmbf","alert":false},{"id":"stcmbg","alert":false},{"id":"stcmbh","alert":false},{"id":"stcmbi","alert":false},{"id":"stcmbj","alert":true}]
 ```
